@@ -26,7 +26,7 @@ phases:
       ####OWASP Depedency Check
       - cd dependency-check/bin
       - pwd
-      - ls
+      - ls -la
       - $CODEBUILD_SRC_DIR/dependency-check/bin/dependency-check.sh --project "java" --format JSON --scan $CODEBUILD_SRC_DIR/code
       - echo "OWASP dependency check analysis status is completed..."; 
       - ls -lrt && pwd && cat dependency-check-report.json
