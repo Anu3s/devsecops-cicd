@@ -1,8 +1,9 @@
 version: 0.2
 phases:
   install:
-    commands:
-      - echo "install phase here....."
+    runtime-versions:
+      dotnet: 3.1
+      
   pre_build:
     commands:
       - composer install
