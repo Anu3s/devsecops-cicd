@@ -1,5 +1,3 @@
-##Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-##SPDX-License-Identifier: MIT-0
 version: 0.2
 phases:
   install:
@@ -7,9 +5,6 @@ phases:
       - echo "install phase here....."
   pre_build:
     commands:
-      - mvn -v
-      - mvn clean package
-      - mkdir -p code && rsync -av $CODEBUILD_SRC_DIR/* code/ --exclude infra --exclude lambda-functions --exclude code
       - composer install
       - wget https://github.com/jeremylong/DependencyCheck/releases/download/v7.4.0/dependency-check-7.4.0-release.zip
       - unzip dependency-check-7.4.0-release.zip
@@ -19,18 +14,9 @@ phases:
   build:
     commands: 
       - cd dependency-check/bin
-      - pwd
-      - ls -la
-      - $CODEBUILD_SRC_DIR/dependency-check/bin/dependency-check.sh --project "java" --format JSON --scan $CODEBUILD_SRC_DIR/code
+      - $CODEBUILD_SRC_DIR/dependency-check/bin/dependency-check.sh --project "dep-check" --format JSON --prettyPrint --enableExperimental --scan $CODEBUILD_SRC_DIR --exclude '$CODEBUILD_SRC_DIR/depedency-check/'
       - echo "OWASP dependency check analysis status is completed..."; 
-      - ls -lrt && pwd && cat dependency-check-report.json
-      - chmod 775 *
-      - if( cat dependency-check-report.json | grep -i highest); then high_risk_dependency="yes"; else high_risk_dependency="no"; fi
-      - echo "high depednecy are " $high_risk_dependency
-      - echo "risk is " $risk
-      # - $CODEBUILD_SRC_DIR/dependency-check/bin/dependency-check.sh --project "dep-check" --format JSON --prettyPrint --enableExperimental --scan $CODEBUILD_SRC_DIR --exclude '$CODEBUILD_SRC_DIR/depedency-check/'
-      # - echo "OWASP dependency check analysis status is completed..."; 
-      # - high_risk_dependency=$( cat dependency-check-report.json | grep -c "HIGHEST" )
+      - high_risk_dependency=$( cat dependency-check-report.json | grep -c "HIGHEST" )
   post_build:
     commands:
       - | 
